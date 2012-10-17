@@ -14,3 +14,5 @@
   (yas/load-directory "~/.emacs.d/yasnippets-rails/rails-snippets")
   (setq yas/prompt-functions '(yas/dropdown-prompt))
   )
+
+(provide 'my-template-conf)

@@ -159,3 +159,4 @@
       [unspecified "black" "#ff5555" "#55ff55" "#ffff55" "#5555ff"
 		   "#ff55ff" "#55ffff" "white"])
 
+(provide 'my-shell-conf)

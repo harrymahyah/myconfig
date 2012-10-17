@@ -174,7 +174,7 @@
        
        ))
   ;;キーバインド解除
-  (define-key org-mode-map [(C ,)] nil)
+  (define-key org-mode-map [(C ?,)] nil)
   ;;(define-key org-mode-map [(C tab)] 'elscreen-next)
   (define-key org-mode-map [(C tab)] 'nil)
 
@@ -208,6 +208,8 @@
 
     
 
-    ))
+    )
+  )
 
 
+(provide 'my-org-mode-conf)

@@ -2,6 +2,17 @@
 
 ;; (autoload 'my-keybind-conf "my-keybind-conf" nil t)
 
+(require 'my-keybind-conf)
+(require 'my-anything-conf)
+(require 'my-auto-complete-conf)
+(require 'my-major-mode-conf)
+(require 'my-org-mode-conf)
+(require 'my-shell-conf)
+(require 'my-key-chord-conf)
+(require 'my-viewmode-conf)
+(require 'my-template-conf)
+
+
 ;;------------------;;
 ;;     dired設定     ;;
 ;;------------------;;

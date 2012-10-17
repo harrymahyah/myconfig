@@ -6,9 +6,9 @@
 ;;require設定
 ;; (require 'php-mode)
 ;; (require 'html-helper-mode)
-(require 'mmm-mode)
-(require 'attentive-pair-completion)
-;;(setq-default attentive-pair-completion nil)
+;; (require 'mmm-mode)
+;; (require 'gemini)
+;;(setq-default gemini nil)
 
 
 
@@ -39,19 +39,19 @@
 
 ;;拡張子によるモード判別
 
-(setq auto-mode-alist (append '(
-				("\\.sh$" . fundamental-mode)
-				("\\.html$" . html-helper-mode)
-				;;		       ("\\.tpl$" . html-helper-mode)
-				;;		       ("\\.js$" . js2-mode)
-				("\\.txt$" . org-mode)
-				("\\.org$" . org-mode)
-				("\\.js$" . javascript-mode)
-				("\\.rb$" . ruby-mode)
-				;;		       ("\\.dot$" . graphviz-dot-mode)
+;; (setq auto-mode-alist (append '(
+;; 				("\\.sh$" . fundamental-mode)
+;; 				("\\.html$" . html-helper-mode)
+;; 				;;		       ("\\.tpl$" . html-helper-mode)
+;; 				;;		       ("\\.js$" . js2-mode)
+;; 				("\\.txt$" . org-mode)
+;; 				("\\.org$" . org-mode)
+;; 				("\\.js$" . javascript-mode)
+;; 				("\\.rb$" . ruby-mode)
+;; 				;;		       ("\\.dot$" . graphviz-dot-mode)
 
-				;;("\\.ctp$" . php-html-helper-mode)
-				) auto-mode-alist))
+;; 				;;("\\.ctp$" . php-html-helper-mode)
+;; 				) auto-mode-alist))
 
 ;;;-------txt mode hook ----------
 (defun my-text-mode-hook ()
@@ -61,36 +61,47 @@
 
 
 ;;;-------org mode hook ----------
-(defun my-org-mode-hook ()
-  (set (make-local-variable 'tab-width) 4)
-  )
-(add-hook 'org-mode-hook 'my-org-mode-hook)
 
+(when (require 'org-mode nil t)
+  (setq auto-mode-alist
+	(append
+	 '(("\\.txt$" . org-mode)
+	   ("\\.org$" . org-mode))
+	 auto-mode-alist))
+
+  (defun my-org-mode-hook ()
+    (set (make-local-variable 'tab-width) 4)
+    )
+  (add-hook 'org-mode-hook 'my-org-mode-hook)
+
+  )
 
 ;;;-------lisp mode hook ----------
-(defun my-lisp-mode-hook ()
-  (make-local-variable 'attentive-pair-completion)
-  (attentive-pair-completion t)
-  (make-local-variable 'apc-exclusion-list-in-completion)
-  (setq apc-exclusion-list-in-completion '("\'" "{"))
-  ;;(setq apc-invalid-charactor-list '("\'"))
+(when (require 'gemini nil t)
+  (defun my-lisp-mode-hook ()
+    (make-local-variable 'gemini)
+    (gemini t)
+    (make-local-variable 'gemini-exclusion-list-in-completion)
+    (setq gemini-exclusion-list-in-completion '("\'" "{"))
+    ;;(setq gemini-invalid-charactor-list '("\'"))
+    )
+  (add-hook 'lisp-mode-hook 'my-lisp-mode-hook)
   )
-(add-hook 'lisp-mode-hook 'my-lisp-mode-hook)
-
 
 ;;;-------emacs lisp mode hook ----------
-(defun my-emacs-lisp-mode-hook ()
-  (make-local-variable 'attentive-pair-completion)
-  (attentive-pair-completion t)
-  (make-local-variable 'apc-exclusion-list-in-completion)
-  (setq apc-exclusion-list-in-completion '("\'" "{"))
-  ;;(setq apc-invalid-charactor-list '("\'" "<" "{"))
-  (my-dabbrev-setting-function '(emacs-lisp-mode))
-  (define-key emacs-lisp-mode-map [tab] 'indent-for-tab-command)
+(when (require 'gemini nil t)
+  (defun my-emacs-lisp-mode-hook ()
+    (make-local-variable 'gemini)
+    (gemini t)
+    (make-local-variable 'gemini-exclusion-list-in-completion)
+    (setq gemini-exclusion-list-in-completion '("\'" "{"))
+    ;;(setq gemini-invalid-charactor-list '("\'" "<" "{"))
+    (my-dabbrev-setting-function '(emacs-lisp-mode))
+    (define-key emacs-lisp-mode-map [tab] 'indent-for-tab-command)
 
+    )
+  (add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-mode-hook)
   )
-(add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-mode-hook)
-
 
 
 ;;;------------------c-mode-------------------
@@ -101,18 +112,21 @@
   (c-set-style "linux")
   (setq tab-width 4)
   (setq c-basic-offset tab-width)
-  (make-local-variable 'attentive-pair-completion)
-  ;; 	     ;; flyspell-prog-mode をオンにする
-  ;; 	     ;;(flyspell-prog-mode)
-  (attentive-pair-completion t))
+  (when (require 'gemini nil t)
+    (make-local-variable 'gemini)
+    ;; 	     ;; flyspell-prog-mode をオンにする
+    ;; 	     ;;(flyspell-prog-mode)
+    (gemini t)))
 (add-hook 'c-mode-hook 'my-c-mode-hook)
 
 
 ;;;------------------c++-mode-------------------
 
 (defun my-c++-mode-hook ()
-  (make-local-variable 'attentive-pair-completion)
-  (attentive-pair-completion t)
+  (when (require 'gemini nil t)
+    (make-local-variable 'gemini)
+    (gemini t)
+    )
   (c-set-style "gnu")
   (setq c-basic-offset 4)
   (setq tab-width c-basic-offset)
@@ -137,8 +151,8 @@
 ;; 	(auto-complete-mode t))
 
 ;;   (my-dabbrev-setting-function '(php-mode))
-;;   (make-local-variable 'attentive-pair-completion)
-;;   (attentive-pair-completion t))
+;;   (make-local-variable 'gemini)
+;;   (gemini t))
 
 ;; (add-hook 'php-mode-hook 'my-php-mode-hook)
 
@@ -146,12 +160,12 @@
 ;;;------------------ruby-mode settings-------------------
 
 ;;require
-(add-to-list 'load-path "~/.emacs.d/ruby")
+;; (add-to-list 'load-path "~/.emacs.d/ruby")
 
 (require 'ruby-mode)
-(require 'ruby-electric)
 
 (add-to-list 'auto-mode-alist '("\\.erb$" . html-helper-mode))
+(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 
 ;;hook
 (defun my-ruby-mode-hook ()
@@ -162,31 +176,32 @@
   (hs-minor-mode 1)
 
   ;; 括弧補完の追加入力を無効化
-  ;; (set (make-local-variable 'apc-brace-additional-function)
+  ;; (set (make-local-variable 'gemini-brace-additional-function)
   ;; '(lambda (arg) nil))
-  ;; (set (make-local-variable 'apc-bracket-additional-function)
+  ;; (set (make-local-variable 'gemini-bracket-additional-function)
   ;; '(lambda (arg) nil))
 
-  ;;(set (make-local-variable 'apc-brace-additional-function)
+  ;;(set (make-local-variable 'gemini-brace-additional-function)
   ;;     '(lambda (arg)
-  ;; (make-local-variable 'apc-brace-additional-function)
-  ;; (defun apc-brace-additional-function (arg)
+  ;; (make-local-variable 'gemini-brace-additional-function)
+  ;; (defun gemini-brace-additional-function (arg)
   ;;   (insert " ")
   ;;   (insert arg)
   ;;   (backward-char)
   ;;   t)
-  ;; (make-local-variable 'apc-bracket-additional-function)
-  ;; (defun apc-bracket-additional-function (arg)
+  ;; (make-local-variable 'gemini-bracket-additional-function)
+  ;; (defun gemini-bracket-additional-function (arg)
   ;;   (insert " ")
   ;;   (insert " ")
   ;;   (insert arg)
   ;;   (backward-char 2)
   ;;   t)
   (my-dabbrev-setting-function '(ruby-mode))
-  (make-local-variable 'attentive-pair-completion)
-  (attentive-pair-completion t)
-  (make-local-variable 'ruby-electric-mode)
-  (ruby-electric-mode t)
+  (make-local-variable 'gemini)
+  (gemini t)
+  (when (require 'ruby-electric nil t)
+    (make-local-variable 'ruby-electric-mode)
+    (ruby-electric-mode t))
   ;;ruby-block-mode
   (when (require 'ruby-block nil t)
     (make-local-variable 'ruby-block-mode)
@@ -195,12 +210,12 @@
 
   (define-key ruby-mode-map "\C-c\{"
     '(lambda () (interactive)
-       ;; apc-brace-additional-function を一時的に置き換える
+       ;; gemini-brace-additional-function を一時的に置き換える
        (let ((old-brace-function))
-	 (fset 'old-brace-function (symbol-function 'apc-brace-additional-function))
-	 (defun apc-brace-additional-function (arg) nil)
-	 (apc-completion-parenthesis "{")
-	 (fset 'apc-brace-additional-function (symbol-function 'old-brace-function))
+	 (fset 'old-brace-function (symbol-function 'gemini-brace-additional-function))
+	 (defun gemini-brace-additional-function (arg) nil)
+	 (gemini-completion-parenthesis "{")
+	 (fset 'gemini-brace-additional-function (symbol-function 'old-brace-function))
 	 )))
   
   )
@@ -228,21 +243,22 @@
 (setq search-invisible nil)
 
 
+(when (require 'ruby-electric nil t)
 
-;;electric-modeのキーマップを上書き
-(defun ruby-electric-setup-keymap()
-  (define-key ruby-mode-map " " 'ruby-electric-space)
-  (define-key ruby-mode-map "\(" 'apc-completion-parenthesis)
-  (define-key ruby-mode-map "\[" 'apc-completion-parenthesis)
-  (define-key ruby-mode-map "\{" 'apc-completion-parenthesis)
-  (define-key ruby-mode-map "'" 'apc-completion-quote)
-  (define-key ruby-mode-map "\"" 'apc-completion-quote)
-  ;;  (define-key ruby-mode-map "\C-m" 'ruby-reindent-then-newline-and-indent)
-  (define-key ruby-mode-map "\C-m" 'reindent-then-newline-and-indent)
-  (define-key ruby-mode-map "\C-j" 'newline)
+  ;;electric-modeのキーマップを上書き
+  (defun ruby-electric-setup-keymap()
+    (define-key ruby-mode-map " " 'ruby-electric-space)
+    (define-key ruby-mode-map "\(" 'gemini-completion-parenthesis)
+    (define-key ruby-mode-map "\[" 'gemini-completion-parenthesis)
+    (define-key ruby-mode-map "\{" 'gemini-completion-parenthesis)
+    (define-key ruby-mode-map "'" 'gemini-completion-quote)
+    (define-key ruby-mode-map "\"" 'gemini-completion-quote)
+    ;;  (define-key ruby-mode-map "\C-m" 'ruby-reindent-then-newline-and-indent)
+    (define-key ruby-mode-map "\C-m" 'reindent-then-newline-and-indent)
+    (define-key ruby-mode-map "\C-j" 'newline)
 
+    )
   )
-
 
 ;;括弧補完を無効化 キーマップが設定されるので不採用
 ;;(setq ruby-electric-expand-delimiters-list nil)
@@ -266,54 +282,54 @@
 
 ;;;------------------scala-mode settings-------------------
 
-(add-to-list 'load-path "~/.emacs.d/scala-mode")
-(add-to-list 'load-path "~/.emacs.d/ensime/elisp")
 
-(require 'scala-mode-auto)
-(require 'ensime)
-(setq scala-interpreter "/usr/bin/scala -Xnojline")
-(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
+;; (add-to-list 'load-path "~/.emacs.d/scala-mode")
+;; (add-to-list 'load-path "~/.emacs.d/ensime/elisp")
 
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(when (require 'scala-mode-auto nil t)
+  (setq scala-interpreter "/usr/bin/scala -Xnojline")
+  (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
+
+  (defun my-scala-mode-hook ()
+    (make-local-variable 'gemini)
+    (gemini t)
+    (auto-complete-mode t)
+
+    ;;(setq 'gemini-brace-additional-function nil)
+    ;; (set (make-local-variable 'gemini-brace-additional-function)
+    ;; 	 '(lambda (arg) nil))
+
+    (make-local-variable 'gemini-brace-additional-function)
+
+    (define-key scala-mode-map "\C-cs" 'scala-run-scala)
+    (define-key scala-mode-map "\C-c\C-e" 'scala-eval-definition)
+    (define-key scala-mode-map "\C-ce" 'scala-eval-buffer)
+    (define-key scala-mode-map "\C-j" 'scala-newline)
+    (define-key scala-mode-map "\C-m" '(lambda () (interactive) (scala-newline)(scala-indent-line)))
+
+    ;; 改行なし補完 scala のimport での{}表記に対応するため
+    (define-key scala-mode-map "\C-c\{"
+      '(lambda () (interactive)
+	 ;; gemini-brace-additional-function を一時的に置き換える
+	 (let ((old-brace-function))
+	   (fset 'old-brace-function (symbol-function 'gemini-brace-additional-function))
+	   (defun gemini-brace-additional-function (arg) nil)
+	   (gemini-completion-parenthesis "{")
+	   (fset 'gemini-brace-additional-function (symbol-function 'old-brace-function))
+	   )))
+    
+    )
+
+  (add-hook 'scala-mode-hook 'my-scala-mode-hook)
+  )
+
+(when (require 'ensime nil t)
+  (add-hook 'scala-mode-hook 'ensime-scala-mode-hook))
 ;; (add-hook 'scala-mode-hook
 ;;  (lambda ()
 ;;     (define-key global-map "\C-cs" 'scala-run-scala)
 ;;     (define-key global-map "\C-c\C-e" 'scala-eval-definition)
 ;;     (define-key global-map "\C-ce" 'scala-eval-buffer)))
-
-
-(defun my-scala-mode-hook ()
-  (make-local-variable 'attentive-pair-completion)
-  (attentive-pair-completion t)
-  (auto-complete-mode t)
-
-  ;;(setq 'apc-brace-additional-function nil)
-  ;; (set (make-local-variable 'apc-brace-additional-function)
-  ;; 	 '(lambda (arg) nil))
-
-  (make-local-variable 'apc-brace-additional-function)
-
-  (define-key scala-mode-map "\C-cs" 'scala-run-scala)
-  (define-key scala-mode-map "\C-c\C-e" 'scala-eval-definition)
-  (define-key scala-mode-map "\C-ce" 'scala-eval-buffer)
-  (define-key scala-mode-map "\C-j" 'scala-newline)
-  (define-key scala-mode-map "\C-m" '(lambda () (interactive) (scala-newline)(scala-indent-line)))
-
-  ;; 改行なし補完 scala のimport での{}表記に対応するため
-  (define-key scala-mode-map "\C-c\{"
-    '(lambda () (interactive)
-       ;; apc-brace-additional-function を一時的に置き換える
-       (let ((old-brace-function))
-	 (fset 'old-brace-function (symbol-function 'apc-brace-additional-function))
-	 (defun apc-brace-additional-function (arg) nil)
-	 (apc-completion-parenthesis "{")
-	 (fset 'apc-brace-additional-function (symbol-function 'old-brace-function))
-	 )))
-  
-  )
-
-(add-hook 'scala-mode-hook 'my-scala-mode-hook)
-
 
 ;;;------------------html-mode settings-------------------
 
@@ -323,11 +339,11 @@
 
 
   (defun my-html-helper-mode-hook ()
-    (make-local-variable 'attentive-pair-completion)
-    (attentive-pair-completion t)
-    (setq apc-use-parenthesis-balance nil)
-    (define-key html-helper-mode-map "<" 'apc-completion-parenthesis)
-    (set (make-local-variable 'apc-brace-additional-function)
+    (make-local-variable 'gemini)
+    (gemini t)
+    (setq gemini-use-parenthesis-balance nil)
+    (define-key html-helper-mode-map "<" 'gemini-completion-parenthesis)
+    (set (make-local-variable 'gemini-brace-additional-function)
 	 '(lambda (arg) nil))
     (setq html-helper-build-new-buffer nil)
     (my-dabbrev-setting-function '(html-helper-mode))
@@ -407,43 +423,47 @@
 ;;;------------------mmm-mode setting-------------------
 
 ;;; mmm-modeの設定
-(require 'mmm-mode)
-(setq mmm-global-mode 'maybe)
-(setq mmm-submode-decoration-level 2)
-(set-face-background 'mmm-default-submode-face "gray21")
+(when (require 'mmm-mode nil t)
+  (setq mmm-global-mode 'maybe)
+  (setq mmm-submode-decoration-level 2)
+  (set-face-background 'mmm-default-submode-face "gray21")
 
 
 
-;; (mmm-add-classes
-;;  '((html-php
-;;     :submode php-mode
-;; 	:front "<\\?\\(php\\)?"
-;; 	:back "\\?>")))
+  ;; (mmm-add-classes
+  ;;  '((html-php
+  ;;     :submode php-mode
+  ;; 	:front "<\\?\\(php\\)?"
+  ;; 	:back "\\?>")))
 
 ;;; mmm-modeのサブモード切替設定
 					;(mmm-add-mode-ext-class nil "\\.php?\\'" 'html-php)
-;; (mmm-add-mode-ext-class nil "\\.ctp?\\'" 'html-php)
+  ;; (mmm-add-mode-ext-class nil "\\.ctp?\\'" 'html-php)
 
-;; (add-to-list 'auto-mode-alist '("\\.php?\\'" . html-mode))
-;; (add-to-list 'auto-mode-alist '("\\.ctp?\\'" . php-html-helper-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.php?\\'" . html-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.ctp?\\'" . php-html-helper-mode))
 
 
 ;;;mmmでのphpインデント対応
-;; (defun save-mmm-c-locals ()
-;;   (with-temp-buffer
-;; 	(php-mode)
-;; 	(dolist (v (buffer-local-variables))
-;; 	  (when (string-match "\\`c-" (symbol-name (car v)))
-;; 		(add-to-list 'mmm-save-local-variables `(,(car v) nil
-;; 							 ,mmm-c-derived-modes))))))
-;; (save-mmm-c-locals)
-
+  ;; (defun save-mmm-c-locals ()
+  ;;   (with-temp-buffer
+  ;; 	(php-mode)
+  ;; 	(dolist (v (buffer-local-variables))
+  ;; 	  (when (string-match "\\`c-" (symbol-name (car v)))
+  ;; 		(add-to-list 'mmm-save-local-variables `(,(car v) nil
+  ;; 							 ,mmm-c-derived-modes))))))
+  ;; (save-mmm-c-locals)
+  )
 ;;;ここまで
 
 
+;;;------------------shell-mode setting-------------------
+
+(add-to-list 'auto-mode-alist '("\\.sh$" . shell-script-mode))
+
 ;;;なんかshellのモード？
-(require 'shell-command)
-(shell-command-completion-mode)
+;; (require 'shell-command)
+;; (shell-command-completion-mode)
 
 
 
@@ -560,3 +580,5 @@
 ;;              ))
 ;;gtagsのSELECTバッファを移動対象から外す
 (setq iswitchb-buffer-ignore '("^ " "^TAGS" "\\*GTAGS SELECT" "\\*Ibuffer\\*"))
+
+(provide 'my-major-mode-conf)

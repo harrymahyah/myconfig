@@ -62,3 +62,5 @@
   (my-ac-config)
   )
 
+(provide 'my-auto-complete-conf)
+
