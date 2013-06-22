@@ -1,11 +1,16 @@
 
 ;;;----------------orgモード設定--------------
 (require 'org-install)
+
 ;;(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (define-key global-map "\C-cr" 'org-remember)
 
+(setq auto-mode-alist (append '(
+				("\\.txt$" . org-mode)
+				("\\.org$" . org-mode)
+				) auto-mode-alist))
 
 
 ;; org-default-notes-fileのディレクトリ

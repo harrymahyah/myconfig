@@ -1,6 +1,7 @@
 "文字コード設定================
 	set fileencoding=utf-8
-	set fileencodings=iso-2022-jp,utf-8,euc-jp,cp932
+	"set fileencodings=iso-2022-jp,utf-8,euc-jp,cp932
+	set fileencodings=utf-8
 	
 
 "システム設定==================
@@ -50,8 +51,8 @@
         set nowrap
  
         "タブを>----で表示
-        set listchars=tab:>-
-        set list
+        "set listchars=tab:>-
+        "set list
  
         "タブを>    で表示
         "set listchars=tab:>\ 

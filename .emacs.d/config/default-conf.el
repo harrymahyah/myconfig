@@ -162,5 +162,73 @@ With prefix argumet ARG, insert current time string in Japanese."
     last))
 
 
+;;revive.el
+
+(autoload 'save-current-configuration "revive" "Save status" t)
+(autoload 'resume "revive" "Resume Emacs" t)
+(autoload 'wipe "revive" "Wipe emacs" t)
+;; (define-key ctl-x-map "r" 'resume)                        ; C-x F で復元
+;; (define-key ctl-x-map "w" 'wipe)                          ; C-x K で Kill
+(define-key ctl-x-map "s" 'save-named-buffer-status)                          ; C-x s で 状態保存
+;; (define-key ctl-x-map "s" 'save-current-configuration)                          ; C-x s で 状態保存
+;;(add-hook 'kill-emacs-hook 'save-current-configuration)   ; 終了時に保存
+
+
+;; revive.el で複数の状態を選択的に保存
+(defvar revive-file-dir "~/")
+(defvar revive-file-prefix ".revive_state_")
+;;(defvar revive-file-postfix "state")
+
+(when (require 'revive nil t)
+
+  (defun save-named-buffer-status (name)
+    (interactive "Msave state name: ");;ミニバッファで読んだ文字列
+
+    (let ((original-file revive:configuration-file))
+      
+      ;; revive.el の保存ファイル名を一時的に変更
+      (setq revive:configuration-file
+	    (concat revive-file-dir	revive-file-prefix name	"_"
+		    (format-time-string "%Y-%m-%dT%T" (current-time))))
+
+      ;; 保存
+      (save-current-configuration )
+
+      ;; 保存ファイル名を元に戻す
+      (setq revive:configuration-file original-file)))
+
+  (defun resume-named-buffer-status ()
+    (interactive)
+    (let ((state-name)(state-timestamp)(state-list)
+	  (original-file revive:configuration-file)(state)(state-key)
+	  (files  (directory-files
+		   revive-file-dir nil (concat "^" revive-file-prefix ".*"))))
+
+      ;; 保存ファイル名のリストを作成
+      (mapcar '(lambda (n)
+		 (add-to-list 'state-list
+			      (list (substring n (length revive-file-prefix)))))
+			      ;; (list (substring n (length revive-file-prefix) -20) (substring n -19 nil))))
+	      files)
+      
+      (setq state (completing-read "revive state name: " state-list))
+      ;; (setq state-key (completing-read "revive state name: " state-list))
+      ;; (setq state (assoc state-key state-list))
+      
+      (if state
+	  (progn 
+	    (setq revive:configuration-file
+		  (concat revive-file-dir revive-file-prefix state ))
+		  ;; (concat revive-file-dir revive-file-prefix (car state) "_" (car (cdr state)) ))
+	    (resume)
+	    (setq revive:configuration-file original-file)))))
+  
+  (defun wipe-and-named-resume ()
+    (interactive)
+    (wipe)
+    (resume-named-buffer-status))
+  )
+
+
 
 (provide 'default-conf)

@@ -62,5 +62,11 @@
   (my-ac-config)
   )
 
+;; 補完に日本語が含まれないようにする
+(defadvice ac-word-candidates (after remove-word-contain-japanese activate)
+  (let ((contain-japanese (lambda (s) (string-match (rx (category japanese)) s))))
+    (setq ad-return-value
+          (remove-if contain-japanese ad-return-value))))
+
 (provide 'my-auto-complete-conf)
 

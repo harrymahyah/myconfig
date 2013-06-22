@@ -1,43 +1,58 @@
-# .bashrc
-
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
+# System-wide .bashrc file for interactive bash(1) shells.
+if [ -z "$PS1" ]; then
+   return
 fi
 
-#if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-#    . /etc/bash_completion
-#fi
+PS1='\h:\W \u\$ '
+# Make bash check its window size after a process completes
+shopt -s checkwinsize
+# Tell the terminal about the working directory at each prompt.
+if [ "$TERM_PROGRAM" == "Apple_Terminal" ] && [ -z "$INSIDE_EMACS" ]; then
+    update_terminal_cwd() {
+        # Identify the directory using a "file:" scheme URL,
+        # including the host name to disambiguate local vs.
+        # remote connections. Percent-escape spaces.
+	local SEARCH=' '
+	local REPLACE='%20'
+	local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+	printf '\e]7;%s\a' "$PWD_URL"
+    }
+    PROMPT_COMMAND="update_terminal_cwd; $PROMPT_COMMAND"
+fi
 
-# User specific aliases and functions
-#alias ls='ls --color=auto -X'
-alias la='ls -A -X'
-alias li='ls -1'
-alias ll='ls -lh'
+alias ls="ls -G"
+alias la="ls -alG"
+alias ll="ls -lG"
+alias li='ls -1G'
 alias cp='cp -i'
 alias mv='mv -i'
 alias du='du -h'
-alias less='less -RX'
+#alias less='less -RX'
 alias tree='tree -C'
-alias odc='od -tx1c'
-#alias dir='dir --color=auto'
-#vdir='vdir --color=auto'
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
 
 #git
 alias gil="git log --graph --date-order -C -M --pretty=format:'<%h> %ad [%cn] %Cgreen%d%Creset %s' --all --date=short"
 alias gib="git branch"
-alias gico="git commit"
+alias gicm="git commit"
+alias gico="git checkout"
 alias gis="git status"
 alias gisu="git status -uno"
-alias gici="git commit -a"
+alias gica="git commit -a"
 alias gid="git diff"
+alias gidn="git diff --name-only"
 alias gip="git pull"
+alias gils="git ls-files"
 
-#prompt
-#export PS1="\[$(tput setaf 2)¥u$(tput setaf 7)@$(tput setaf 3)¥h $(tput sgr0)¥t $(tput setaf 6)¥w$(tput sgr0)\]¥¥n¥$ "
+# git complete
+git_comp="/usr/share/git-core/git-completion.bash"
+if [ -f $git_comp ]; then
+	source $git_comp
+fi
+
+__git_complete gico _git_checkout
+__git_complete gid _git_diff
+__git_complete gidn _git_diff
+__git_complete gib _git_branch
 
 export HISTCONTROL=ignoreboth
 export HISTIGNORE="fg*:bg*:history*:cd:cd -:ls:ll"
