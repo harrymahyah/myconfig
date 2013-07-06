@@ -3,7 +3,7 @@ if [ -z "$PS1" ]; then
    return
 fi
 
-PS1='\h:\W \u\$ '
+#PS1='\h:\W \u\$ '
 # Make bash check its window size after a process completes
 shopt -s checkwinsize
 # Tell the terminal about the working directory at each prompt.
@@ -53,6 +53,15 @@ __git_complete gico _git_checkout
 __git_complete gid _git_diff
 __git_complete gidn _git_diff
 __git_complete gib _git_branch
+
+# display branch name to prompt
+git_prompt="/usr/share/git-core/git-prompt.sh"
+if [ -f $git_prompt ]; then
+	source $git_prompt
+fi
+
+#PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
+export PS1='[\[\033[01;32m\]\u@\h\[\033[01;33m\] \w$(__git_ps1) \[\e[00m\] \t]\n\[\033[01;34m\]\$\[\033[00m\] '
 
 export HISTCONTROL=ignoreboth
 export HISTIGNORE="fg*:bg*:history*:cd:cd -:ls:ll"
