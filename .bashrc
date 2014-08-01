@@ -29,6 +29,9 @@ alias mv='mv -i'
 alias du='du -h'
 #alias less='less -RX'
 alias tree='tree -C'
+alias updatedb='/usr/libexec/locate.updatedb'
+alias xcode='open -a /Applications/Xcode.app'
+complete -d -X '!*.xcworkspace' xcode
 
 #git
 alias gil="git log --graph --date-order -C -M --pretty=format:'<%h> %ad [%cn] %Cgreen%d%Creset %s' --all --date=short"
@@ -44,7 +47,8 @@ alias gip="git pull"
 alias gils="git ls-files"
 
 # git complete
-git_comp="/usr/share/git-core/git-completion.bash"
+git_comp="/usr/local/etc/profile.d/bash_completion.sh"
+#git_comp="/usr/share/git-core/git-completion.bash"
 if [ -f $git_comp ]; then
 	source $git_comp
 fi
